@@ -199,5 +199,50 @@ function exportToExcel() {
 }
 </script>
 
+<script>
+// Định nghĩa các hàm xử lý sự kiện và thao tác dữ liệu
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadCustomerData();
+});
+
+// Các hàm khác...
+
+function loadCustomerData() {
+    var customerData = JSON.parse(localStorage.getItem('customerData')) || [];
+    customerData.forEach(function(customer) {
+        addRowToTable(customer);
+    });
+}
+
+function addCustomer() {
+    // Code thêm khách hàng
+    // Sau khi thêm xong, cập nhật dữ liệu lưu trữ
+    updateLocalStorage();
+}
+
+function editCustomer(row) {
+    // Code chỉnh sửa thông tin khách hàng
+    // Sau khi chỉnh sửa xong, cập nhật dữ liệu lưu trữ
+    updateLocalStorage();
+}
+
+function updateLocalStorage() {
+    var table = document.getElementById("customerTable");
+    var customerData = [];
+    for (var i = 1; i < table.rows.length; i++) {
+        var customer = {
+            fullName: table.rows[i].cells[0].innerHTML,
+            idNumber: table.rows[i].cells[1].innerHTML,
+            address: table.rows[i].cells[2].innerHTML,
+            phoneNumber: table.rows[i].cells[3].innerHTML,
+            dob: table.rows[i].cells[4].innerHTML
+        };
+        customerData.push(customer);
+    }
+    localStorage.setItem('customerData', JSON.stringify(customerData));
+}
+</script>
+    
 </body>
 </html>
