@@ -29,6 +29,12 @@
         margin-top: 6px;
         margin-bottom: 16px;
     }
+
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
 </style>
 </head>
 <body>
@@ -40,7 +46,7 @@
     <button onclick="showSearchForm()" style="margin-left: 10px;">Tra Cứu</button>
 </div>
 
-<div>
+<div class="button-container">
     <button onclick="showAddForm()">Thêm Mới</button>
     <button onclick="exportToExcel()">Xuất Excel</button>
 </div>
@@ -83,126 +89,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var customerData = JSON.parse(localStorage.getItem('customerData')) || [];
-    customerData.forEach(function(customer) {
-        addRowToTable(customer);
-    });
-});
-
-function searchCustomer() {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("searchInput");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("customerTable");
-    tr = table.getElementsByTagName("tr");
-    for (i = 1; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[0];
-        if (td) {
-            txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
-}
-
-function addCustomer() {
-    var fullName = document.getElementById("fullName").value;
-    var idNumber = document.getElementById("idNumber").value;
-    var address = document.getElementById("address").value;
-    var phoneNumber = document.getElementById("phoneNumber").value;
-    var dob = document.getElementById("dob").value;
-
-    var customer = {
-        fullName: fullName,
-        idNumber: idNumber,
-        address: address,
-        phoneNumber: phoneNumber,
-        dob: dob
-    };
-
-    var customerData = JSON.parse(localStorage.getItem('customerData')) || [];
-    customerData.push(customer);
-    localStorage.setItem('customerData', JSON.stringify(customerData));
-
-    addRowToTable(customer);
-
-    alert("Khách hàng đã được thêm thành công!");
-    document.getElementById("addForm").reset();
-}
-
-function addRowToTable(customer) {
-    var table = document.getElementById("customerTable");
-    var row = table.insertRow(-1);
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    var cell4 = row.insertCell(3);
-    var cell5 = row.insertCell(4);
-    var cell6 = row.insertCell(5);
-    cell1.innerHTML = customer.fullName;
-    cell2.innerHTML = customer.idNumber;
-    cell3.innerHTML = customer.address;
-    cell4.innerHTML = customer.phoneNumber;
-    cell5.innerHTML = customer.dob;
-    cell6.innerHTML = '<button onclick="editCustomer(this)">Sửa</button>';
-}
-
-function editCustomer(row) {
-    var cells = row.parentNode.parentNode.cells;
-    var fullName = cells[0].innerHTML;
-    var idNumber = cells[1].innerHTML;
-    var address = cells[2].innerHTML;
-    var phoneNumber = cells[3].innerHTML;
-    var dob = cells[4].innerHTML;
-
-    document.getElementById("fullName").value = fullName;
-    document.getElementById("idNumber").value = idNumber;
-    document.getElementById("address").value = address;
-    document.getElementById("phoneNumber").value = phoneNumber;
-    document.getElementById("dob").value = dob;
-
-    document.getElementById("addCustomerForm").style.display = "block";
-    document.getElementById("searchCustomerForm").style.display = "none";
-}
-
-function showAddForm() {
-    document.getElementById("addCustomerForm").style.display = "block";
-    document.getElementById("searchCustomerForm").style.display = "none";
-}
-
-function hideAddForm() {
-    document.getElementById("addCustomerForm").style.display = "none";
-}
-
-function showSearchForm() {
-    document.getElementById("searchCustomerForm").style.display = "block";
-    document.getElementById("addCustomerForm").style.display = "none";
-}
-
-function hideSearchForm() {
-    document.getElementById("searchCustomerForm").style.display = "none";
-}
-
-function exportToExcel() {
-    var table = document.getElementById("customerTable");
-    var html = table.outerHTML.replace(/ /g, '%20');
-    var uri = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
-    var downloadLink = document.createElement("a");
-    downloadLink.href = uri;
-    downloadLink.download = "customer_data.xls";
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-}
-</script>
-
-<script>
-// Định nghĩa các hàm xử lý sự kiện và thao tác dữ liệu
-
-document.addEventListener('DOMContentLoaded', function() {
     loadCustomerData();
 });
 
@@ -243,6 +129,6 @@ function updateLocalStorage() {
     localStorage.setItem('customerData', JSON.stringify(customerData));
 }
 </script>
-    
+
 </body>
 </html>
