@@ -1,227 +1,57 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quản lý thông tin khách hàng</title>
-<style>
-    body {
-        background-color: #fff; /* Đã xoá chế độ nền tối */
-        color: #333; /* Đã thay đổi màu văn bản */
-        font-family: Arial, sans-serif;
-    }
-
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    th, td {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f2f2f2; /* Đã thay đổi màu nền cho hàng chẵn */
-    }
-
-    #searchInput {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-        margin-top: 6px;
-        margin-bottom: 16px;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý thông tin khách hàng</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<h2>Quản lý thông tin khách hàng</h2>
+<div id="customer-management">
+    <div class="header">
+        <h1>Quản lý thông tin khách hàng</h1>
+    </div>
 
-<div style="display: flex; align-items: center;">
-    <input type="text" id="searchInput" onkeyup="searchCustomer()" placeholder="Tìm kiếm theo tên..." style="flex: 1;">
-    <button onclick="showSearchForm()" style="margin-left: 10px;">Tra Cứu</button>
+    <div class="search">
+        <input type="text" id="searchInput" onkeyup="searchCustomer()" placeholder="Tìm kiếm theo tên...">
+    </div>
+
+    <div class="buttons">
+        <button onclick="showAddForm()">Thêm Mới</button>
+        <button onclick="exportToExcel()">Xuất Excel</button>
+    </div>
+
+    <div id="addCustomerForm" class="form" style="display: none;">
+        <!-- Form Thêm mới khách hàng -->
+        <h3>Thêm Mới Khách Hàng</h3>
+        <form id="addForm">
+            <label for="fullName">Tên đầy đủ:</label><br>
+            <input type="text" id="fullName" name="fullName" required><br>
+            <label for="customerId">Mã Khách Hàng:</label><br>
+            <input type="text" id="customerId" name="customerId" required><br>
+            <input type="button" value="Thêm" onclick="addCustomer()">
+            <button type="button" onclick="hideAddForm()">Hủy</button>
+        </form>
+    </div>
+
+    <div class="content">
+        <table id="customerTable">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Tên đầy đủ</th>
+                    <th>Mã Khách Hàng</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dữ liệu khách hàng sẽ được thêm vào đây -->
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<div>
-    <button onclick="showAddForm()">Thêm Mới</button>
-    <button onclick="exportToExcel()">Xuất Excel</button>
-</div>
-
-<div id="addCustomerForm" style="display: none;">
-    <h3>Thêm Khách Hàng Mới</h3>
-    <form id="addForm">
-        <label for="fullName">Tên đầy đủ:</label><br>
-        <input type="text" id="fullName" name="fullName" required><br>
-        <label for="customerId">Mã Khách Hàng:</label><br>
-        <input type="text" id="customerId" name="customerId" required><br><br>
-        <input type="button" value="Thêm" onclick="addCustomer()">
-        <input type="button" value="Cập Nhật" onclick="updateCustomer()">
-        <button type="button" onclick="hideAddForm()">Hủy</button>
-    </form>
-</div>
-
-<div id="searchCustomerForm" style="display: none;">
-    <h3>Tra Cứu Khách Hàng</h3>
-    <input type="text" id="searchInputForm" onkeyup="searchCustomer()" placeholder="Tìm kiếm theo tên...">
-    <button type="button" onclick="hideSearchForm()">Hủy</button>
-</div>
-
-<table id="customerTable">
-    <thead>
-        <tr>
-            <th style="width: 5%;">STT</th>
-            <th style="width: 15%;">Tên đầy đủ</th>
-            <th style="width: 10%;">Mã Khách Hàng</th>
-            <th style="width: 15%;">Kiểm Tra</th>
-            <th style="width: 15%;">Số tiền</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Thêm các dòng dữ liệu khách hàng vào đây bằng JavaScript -->
-    </tbody>
-</table>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    loadCustomerData();
-});
-
-function searchCustomer() {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("searchInput");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("customerTable");
-    tr = table.getElementsByTagName("tr");
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[1]; // Index 1 is where name is located
-        if (td) {
-            txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
-}
-
-function addCustomer() {
-    var fullName = document.getElementById("fullName").value;
-    var customerId = document.getElementById("customerId").value;
-
-    if (fullName === '' || customerId === '') {
-        alert("Vui lòng nhập đầy đủ thông tin.");
-        return;
-    }
-
-    var customer = {
-        fullName: fullName,
-        customerId: customerId
-    };
-
-    addRowToTable(customer);
-    updateLocalStorage();
-
-    alert("Khách hàng đã được thêm thành công!");
-    document.getElementById("addForm").reset();
-}
-
-function addRowToTable(customer) {
-    var table = document.getElementById("customerTable").getElementsByTagName('tbody')[0];
-    var row = table.insertRow(-1);
-    var cellIndex = row.insertCell(0);
-    var cell1 = row.insertCell(1);
-    var cell2 = row.insertCell(2);
-    var cell3 = row.insertCell(3);
-    var cell4 = row.insertCell(4);
-
-    cellIndex.innerHTML = table.rows.length; // STT bắt đầu từ 1
-    cell1.innerHTML = customer.fullName;
-    cell2.innerHTML = customer.customerId;
-    cell3.innerHTML = '<button onclick="checkAmount(this)">Kiểm Tra</button>';
-    cell4.innerHTML = ''; // Ô trống cho cột số tiền
-}
-
-function editCustomer(row) {
-    var cells = row.parentNode.cells;
-    var fullName = cells[1].innerHTML;
-    var customerId = cells[2].innerHTML;
-
-    document.getElementById("fullName").value = fullName;
-    document.getElementById("customerId").value = customerId;
-
-    showAddForm(); // Hiển thị form sửa
-}
-
-function updateCustomer() {
-    var table = document.getElementById("customerTable").getElementsByTagName('tbody')[0];
-    var fullName = document.getElementById("fullName").value;
-    var customerId = document.getElementById("customerId").value;
-
-    var cells = table.rows[currentRowIndex].cells;
-    cells[1].innerHTML = fullName;
-    cells[2].innerHTML = customerId;
-
-    updateLocalStorage(); // Cập nhật dữ liệu vào localStorage
-    hideAddForm(); // Ẩn form sửa
-}
-
-var currentRowIndex; // Biến lưu index của dòng cần sửa
-
-function editCustomer(row) {
-    var cells = row.parentNode.cells;
-    currentRowIndex = row.parentNode.rowIndex;
-    var fullName = cells[1].innerHTML;
-    var customerId = cells[2].innerHTML;
-
-    document.getElementById("fullName").value = fullName;
-    document.getElementById("customerId").value = customerId;
-
-    showAddForm(); // Hiển thị form sửa
-}
-
-function showAddForm() {
-    document.getElementById("addCustomerForm").style.display = "block";
-    document.getElementById("searchCustomerForm").style.display = "none";
-}
-
-function hideAddForm() {
-    document.getElementById("addCustomerForm").style.display = "none";
-}
-
-function showSearchForm() {
-    document.getElementById("searchCustomerForm").style.display = "block";
-    document.getElementById("addCustomerForm").style.display = "none";
-}
-
-function hideSearchForm() {
-    document.getElementById("searchCustomerForm").style.display = "none";
-}
-
-function updateLocalStorage() {
-    var table = document.getElementById("customerTable").getElementsByTagName('tbody')[0];
-    var customerData = [];
-    for (var i = 0; i < table.rows.length; i++) {
-        var customer = {
-            fullName: table.rows[i].cells[1].innerHTML,
-            customerId: table.rows[i].cells[2].innerHTML
-        };
-        customerData.push(customer);
-    }
-    localStorage.setItem('customerData', JSON.stringify(customerData));
-}
-
-function loadCustomerData() {
-    var customerData = JSON.parse(localStorage.getItem('customerData')) || [];
-    customerData.forEach(function(customer) {
-        addRowToTable(customer);
-    });
-}
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
